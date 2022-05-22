@@ -1,17 +1,33 @@
 const express = require('express')
-
 const ex = express()
 const server = ex.listen(3000)
 
 const fs = require('fs')
 const path = require('path')
 const url = require('url')
+const { app, BrowserWindow } = require('electron')
 
+const configuration = JSON.parse(fs.readFileSync('configuration.json'))
+
+let updatedConfiguration = configuration
+
+ex.use(express.static('browser_settings/dist'))
 ex.get('/', function(req, res) {
-    res.send('ok')
+    res.sendFile('browser_settings/dist/index.html')
 })
 
-const { app, BrowserWindow } = require('electron')
+ex.get('/configuration', function(req, res) {
+    res.send(configuration)
+})
+
+ex.use(express.json())
+ex.post('/domain', function(req, res) {
+    updatedConfiguration.whitelist.push(req.body.name)
+    
+    fs.writeFileSync('configuration.json', JSON.stringify(updatedConfiguration))
+
+    res.sendStatus(200)
+})
 
 let mainWindow
 
@@ -29,7 +45,7 @@ function createWindow() {
     })
 
     mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, `./dist/index.html`),
+        pathname: path.join(__dirname, `./public/index.html`),
         protocol: "file:",
         slashes: true
     }))
