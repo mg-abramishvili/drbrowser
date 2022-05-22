@@ -11,9 +11,9 @@ const configuration = JSON.parse(fs.readFileSync('configuration.json'))
 
 let updatedConfiguration = configuration
 
-ex.use(express.static('browser_settings/dist'))
+ex.use(express.static(__dirname + '/browser_settings/dist'))
 ex.get('/', function(req, res) {
-    res.sendFile('browser_settings/dist/index.html')
+    res.sendFile(__dirname + '/browser_settings/dist/index.html')
 })
 
 ex.get('/configuration', function(req, res) {
