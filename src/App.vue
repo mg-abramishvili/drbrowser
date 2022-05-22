@@ -1,28 +1,41 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div id="app">
+        <ul>
+            <li v-for="whitelistItem in configuration.whitelist">
+                {{ whitelistItem }}
+            </li>
+        </ul>
+        <input v-model="newWhitelistItem" type="text">
+        <button @click="save()">save</button>
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+    const fs = window.require('fs')
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+    export default {
+        data() {
+            return {
+                newWhitelistItem: '',
+
+                configuration: '',
+            }
+        },
+        mounted() {
+            this.configuration = JSON.parse(fs.readFileSync('configuration.json'))
+        },
+        methods: {
+            save() {
+                if(this.newWhitelistItem.length == 0) {
+                    return this.$swal('Пусто')
+                }
+
+                this.configuration.whitelist.push(this.newWhitelistItem)
+
+                fs.writeFileSync('configuration.json', JSON.stringify(this.configuration))
+    
+                this.newWhitelistItem = ''
+            }
+        }
+    }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
