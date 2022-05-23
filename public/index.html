@@ -63,11 +63,14 @@
 
         <script>
             onload = () => {
+                const fs = window.require('fs')
+
+                const configuration = JSON.parse(fs.readFileSync('configuration.json'))
+
                 const webview = document.querySelector('webview')
                 
-                const homepage = 'https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_a_target'
-                // webview.src = homepage
-                webview.src = 'https://yandex.ru'
+                const homepage = configuration.homepage
+                webview.src = homepage
                 
                 
                 document.getElementById("back").addEventListener("click", function (e) {
@@ -80,9 +83,15 @@
                 
                 webview.addEventListener('new-window', function (e) {
                     e.preventDefault()
-    
-                    if(e.url.includes('exler.ru')) {
-                        return alert('access denied')
+
+                    let urlCheck = configuration.whitelist.find(i => {
+                        if(e.url.includes(i)) {
+                            return true
+                        }
+                    })
+
+                    if(!urlCheck) {
+                        return
                     }
     
                     webview.src = e.url
@@ -90,9 +99,15 @@
                 
                 webview.addEventListener('will-navigate', function (e) {
                     e.preventDefault()
-    
-                    if(e.url.includes('exler.ru')) {
-                        return alert('access denied')
+                    
+                    let urlCheck = configuration.whitelist.find(i => {
+                        if(e.url.includes(i)) {
+                            return true
+                        }
+                    })
+
+                    if(!urlCheck) {
+                        return
                     }
     
                     webview.src = e.url
