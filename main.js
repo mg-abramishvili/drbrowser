@@ -17,24 +17,13 @@ ex.get('/', function(req, res) {
 })
 
 ex.get('/configuration', function(req, res) {
-    res.send(configuration)
+    res.send(updatedConfiguration)
 })
 
 ex.use(express.json())
-ex.post('/domain', function(req, res) {
-    updatedConfiguration.whitelist.push(req.body.name)
+ex.post('/settings', function(req, res) {
+    updatedConfiguration = req.body.configuration
     
-    fs.writeFileSync('configuration.json', JSON.stringify(updatedConfiguration))
-
-    res.sendStatus(200)
-})
-
-ex.post('/domain-delete', function(req, res) {
-    let delIndex = updatedConfiguration.whitelist.indexOf(req.body.name)
-    if (delIndex !== -1) {
-        updatedConfiguration.whitelist.splice(delIndex, 1)
-    }
-
     fs.writeFileSync('configuration.json', JSON.stringify(updatedConfiguration))
 
     res.sendStatus(200)

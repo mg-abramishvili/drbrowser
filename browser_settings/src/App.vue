@@ -1,16 +1,21 @@
 <template>
-    <div class="wrapper">
+    <div class="container">
+        <div class="mb-3">
+            <input v-model="configuration.homepage" type="text" class="form-control">
+        </div>
         <ul class="list-group">
-            <li v-for="whitelistItem in configuration.whitelist" class="list-group-item">
-                {{ whitelistItem }}
-                <button @click="del(whitelistItem)">удалить</button>
+            <li v-for="item in configuration.whitelist" class="list-group-item">
+                {{ item }}
+                <button @click="delWhitelistItem(item)" class="btn btn-sm btn-outline-danger">&times;</button>
             </li>
         </ul>
 
         <div>
-            <input v-model="newWhitelistItem" type="text" class="form-control">
-            <button @click="save()" class="btn btn-primary">save</button>
+            <input v-model="whitelistItem" type="text" class="form-control">
+            <button @click="addWhitelistItem()" class="btn btn-primary">OK</button>
         </div>
+
+        <button @click="save()" class="btn btn-lg btn-primary">Сохранить настройки</button>
     </div>
 </template>
 
@@ -20,7 +25,7 @@
             return {
                 configuration: '',
                 
-                newWhitelistItem: '',
+                whitelistItem: '',
             }
         },
         created() {
@@ -33,28 +38,29 @@
                     this.configuration = response.data
                 })
             },
-            save() {
-                if(this.newWhitelistItem.length == 0) {
+            addWhitelistItem() {
+                if(this.whitelistItem.length == 0) {
                     return
                 }
 
-                axios.post('/domain', {
-                    name: this.newWhitelistItem
+                this.configuration.whitelist.push(this.whitelistItem)
+                
+                this.whitelistItem = ''
+            },
+            delWhitelistItem(item) {
+                let delIndex = this.configuration.whitelist.indexOf(item)
+                if (delIndex !== -1) {
+                    this.configuration.whitelist.splice(delIndex, 1)
+                }
+            },
+            save() {
+                axios.post('/settings', {
+                    configuration: this.configuration
                 })
                 .then(response => {
-                    this.newWhitelistItem = ''
-
                     this.loadConfiguration()
                 })
             },
-            del(item) {
-                axios.post('/domain-delete', {
-                    name: item
-                })
-                .then(response => {
-                    this.loadConfiguration()
-                })
-            }
         }
     }
 </script>
