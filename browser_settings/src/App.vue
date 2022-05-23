@@ -1,12 +1,15 @@
 <template>
-    <div id="app">
-        <ul>
-            <li v-for="whitelistItem in configuration.whitelist">
+    <div class="wrapper">
+        <ul class="list-group">
+            <li v-for="whitelistItem in configuration.whitelist" class="list-group-item">
                 {{ whitelistItem }}
             </li>
         </ul>
-        <input v-model="newWhitelistItem" type="text">
-        <button @click="save()">save</button>
+        
+        <div>
+            <input v-model="newWhitelistItem" type="text" class="form-control">
+            <button @click="save()" class="btn btn-primary">save</button>
+        </div>
     </div>
 </template>
 
