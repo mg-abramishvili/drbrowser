@@ -29,6 +29,17 @@ ex.post('/domain', function(req, res) {
     res.sendStatus(200)
 })
 
+ex.post('/domain-delete', function(req, res) {
+    let delIndex = updatedConfiguration.whitelist.indexOf(req.body.name)
+    if (delIndex !== -1) {
+        updatedConfiguration.whitelist.splice(delIndex, 1)
+    }
+
+    fs.writeFileSync('configuration.json', JSON.stringify(updatedConfiguration))
+
+    res.sendStatus(200)
+})
+
 let mainWindow
 
 function createWindow() {

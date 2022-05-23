@@ -3,9 +3,10 @@
         <ul class="list-group">
             <li v-for="whitelistItem in configuration.whitelist" class="list-group-item">
                 {{ whitelistItem }}
+                <button @click="del(whitelistItem)">удалить</button>
             </li>
         </ul>
-        
+
         <div>
             <input v-model="newWhitelistItem" type="text" class="form-control">
             <button @click="save()" class="btn btn-primary">save</button>
@@ -43,6 +44,14 @@
                 .then(response => {
                     this.newWhitelistItem = ''
 
+                    this.loadConfiguration()
+                })
+            },
+            del(item) {
+                axios.post('/domain-delete', {
+                    name: item
+                })
+                .then(response => {
                     this.loadConfiguration()
                 })
             }
