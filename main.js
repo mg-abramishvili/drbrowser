@@ -5,9 +5,11 @@ const server = ex.listen(3000)
 const fs = require('fs')
 const path = require('path')
 const url = require('url')
+const exec = require('child_process').exec
+
 const { app, BrowserWindow } = require('electron')
 
-const configuration = JSON.parse(fs.readFileSync('configuration.json'))
+const configuration = JSON.parse(fs.readFileSync(__dirname + '/configuration.json'))
 
 let updatedConfiguration = configuration
 
@@ -24,7 +26,7 @@ ex.use(express.json())
 ex.post('/settings', function(req, res) {
     updatedConfiguration = req.body.configuration
     
-    fs.writeFileSync('configuration.json', JSON.stringify(updatedConfiguration))
+    fs.writeFileSync(__dirname + '/configuration.json', JSON.stringify(updatedConfiguration))
 
     res.sendStatus(200)
 })
@@ -59,6 +61,16 @@ function createWindow() {
         mainWindow = null
     })
 }
+
+function execute(command, callback) {
+    exec(command, (error, stdout, stderr) => {
+        callback(stdout)
+    })
+}
+
+// execute('taskmgr', (output) => {
+//     console.log(output)
+// })
 
 app.on('ready', createWindow)
 

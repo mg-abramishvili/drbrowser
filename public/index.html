@@ -66,64 +66,68 @@
 
         <script>
             onload = () => {
-                const fs = window.require('fs')
+                let configuration
 
-                const configuration = JSON.parse(fs.readFileSync('configuration.json'))
-                
-                const Swal = require('sweetalert2')
-
-                const webview = document.querySelector('webview')
-                
-                const homepage = configuration.homepage
-                webview.src = homepage
-                
-                
-                document.getElementById("back").addEventListener("click", function (e) {
-                    webview.goBack()
+                fetch('http://127.0.0.1:3000/configuration')
+                .then(function(data) {
+                    return data.json()
                 })
-                
-                document.getElementById("home").addEventListener("click", function (e) {
-                    webview.src = homepage
-                })
-                
-                webview.addEventListener('new-window', function (e) {
-                    e.preventDefault()
+                .then(function(json) {
+                    configuration = json
 
-                    let urlCheck = configuration.whitelist.find(i => {
-                        if(e.url.includes(i)) {
-                            return true
-                        }
-                    })
+                    const Swal = require('sweetalert2')
 
-                    if(!urlCheck) {
-                        return Swal.fire({
-                            text: 'Доступ запрещен',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        })
-                    }
-    
-                    webview.src = e.url
-                })
-                
-                webview.addEventListener('will-navigate', function (e) {
-                    e.preventDefault()
+                    const webview = document.querySelector('webview')
+
+                    webview.src = configuration.homepage
                     
-                    let urlCheck = configuration.whitelist.find(i => {
-                        if(e.url.includes(i)) {
-                            return true
-                        }
+                    document.getElementById("back").addEventListener("click", function (e) {
+                        webview.goBack()
                     })
-
-                    if(!urlCheck) {
-                        return Swal.fire({
-                            text: 'Доступ запрещен',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        })
-                    }
+                    
+                    document.getElementById("home").addEventListener("click", function (e) {
+                        webview.src = configuration.homepage
+                    })
+                    
+                    webview.addEventListener('new-window', function (e) {
+                        e.preventDefault()
     
-                    webview.src = e.url
+                        let urlCheck = configuration.whitelist.find(i => {
+                            if(e.url.includes(i)) {
+                                return true
+                            }
+                        })
+    
+                        if(!urlCheck) {
+                            return Swal.fire({
+                                text: 'Доступ запрещен',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            })
+                        }
+        
+                        webview.src = e.url
+                    })
+                    
+                    webview.addEventListener('will-navigate', function (e) {
+                        e.preventDefault()
+                        
+                        let urlCheck = configuration.whitelist.find(i => {
+                            if(e.url.includes(i)) {
+                                return true
+                            }
+                        })
+    
+                        if(!urlCheck) {
+                            return Swal.fire({
+                                text: 'Доступ запрещен',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            })
+                        }
+        
+                        webview.src = e.url
+                    })
                 })
             }
         </script>
