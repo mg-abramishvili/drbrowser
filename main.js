@@ -6,8 +6,9 @@ const fs = require('fs')
 const path = require('path')
 const url = require('url')
 const exec = require('child_process').exec
+const Alert = require("electron-alert")
 
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, globalShortcut } = require('electron')
 
 const configuration = JSON.parse(fs.readFileSync(__dirname + '/configuration.json'))
 
@@ -68,11 +69,47 @@ function execute(command, callback) {
     })
 }
 
-// execute('taskmgr', (output) => {
-//     console.log(output)
-// })
-
 app.on('ready', createWindow)
+
+app.whenReady().then(() => {
+    globalShortcut.register('F1', () => {
+        let taskmgrAlert = new Alert()
+
+        let swalOptions = {
+            text: "Введите пароль",
+            input: 'text',
+            showCancelButton: true
+        }
+
+        let promise = taskmgrAlert.fireWithFrame(swalOptions, "Введите пароль", null, false);
+        promise.then((result) => {
+            if (result.value && result.value == '12345678') {
+                app.exit(0)
+            } else if (result.dismiss === Alert.DismissReason.cancel) {
+                // canceled
+            }
+        })
+    })
+
+    globalShortcut.register('F2', () => {
+        let taskmgrAlert = new Alert()
+
+        let swalOptions = {
+            text: "Введите пароль",
+            input: 'text',
+            showCancelButton: true
+        }
+
+        let promise = taskmgrAlert.fireWithFrame(swalOptions, "Delete file?", null, false);
+        promise.then((result) => {
+            if (result.value && result.value == '12345678') {
+                execute('taskmgr', (output) => {})
+            } else if (result.dismiss === Alert.DismissReason.cancel) {
+                // canceled
+            }
+        })
+    })
+})
 
 // new window blocker
 app.on('web-contents-created', function (webContentsCreatedEvent, contents) {
