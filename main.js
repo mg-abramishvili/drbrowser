@@ -139,6 +139,11 @@ app.on('web-contents-created', function (webContentsCreatedEvent, contents) {
     }
 })
 
+app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+    event.preventDefault()
+    callback(true)
+})
+
 app.on('window-all-closed', function () {
     app.quit()
 })
