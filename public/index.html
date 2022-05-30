@@ -102,7 +102,19 @@
                     })
 
                     function onKeyPress(button) {
-                        ipcRenderer.postMessage('kb', button)
+                        let btn = button
+
+                        if(button == '{space}') {
+                            btn = '\u0020'
+                        }
+                        if(button == '{enter}') {
+                            btn = '\u000d'
+                        }
+                        if(button == '{bksp}') {
+                            btn = '\u0008'
+                        }
+
+                        ipcRenderer.postMessage('kb', btn)
                     }
                 })
             }

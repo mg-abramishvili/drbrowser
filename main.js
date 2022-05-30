@@ -134,8 +134,13 @@ app.whenReady().then(() => {
 app.on('web-contents-created', function (webContentsCreatedEvent, contents) {
     if(contents.getType() === 'webview') {
         ipcMain.on('kb', (e, msg) => {
+            if(msg == 'space') {
+                
+            }
+
             contents.sendInputEvent({ type: 'keyDown', keyCode: msg })
             contents.sendInputEvent({ type: 'char', keyCode: msg })
+            contents.sendInputEvent({ type: 'keyUp', keyCode: msg })
         })
 
         contents.on('new-window', function (newWindowEvent, url) {
