@@ -132,12 +132,39 @@ app.whenReady().then(() => {
 
 // new window blocker
 app.on('web-contents-created', function (webContentsCreatedEvent, contents) {
-    if (contents.getType() === 'webview') {
+    if(contents.getType() === 'webview') {
         contents.on('new-window', function (newWindowEvent, url) {
             newWindowEvent.preventDefault()
+            urlCheck(url)
+        })
+        contents.on('will-navigate', function (newWindowEvent, url) {
+            newWindowEvent.preventDefault()
+            urlCheck(url)
+        })
+        contents.on('will-redirect', function (newWindowEvent, url) {
+            newWindowEvent.preventDefault()
+            urlCheck(url)
         })
     }
 })
+
+function urlCheck(url) {
+    if(updatedConfiguration.whitelist.find(i => url.includes(i))) {
+        mainWindow.webContents.send('change-url', url)
+    } else {
+        let urlCheckError = new Alert()
+
+        let swalOptions = {
+            text: "Доступ запрещен",
+            type: 'error',
+        }
+
+        let promise = urlCheckError.fireWithFrame(swalOptions, "Error", null, false);
+        promise.then((result) => {
+            //
+        })
+    }
+}
 
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
     event.preventDefault()

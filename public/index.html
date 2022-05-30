@@ -75,64 +75,22 @@
                 .then(function(json) {
                     configuration = json
 
-                    const Swal = require('sweetalert2')
-
                     const { ipcRenderer } = require('electron')
 
                     const webview = document.querySelector('webview')
 
-                    webview.src = configuration.homepage
-
                     ipcRenderer.on('change-url', function (evt, message) {
                         webview.src = message
                     })
-                    
+
+                    webview.src = configuration.homepage
+                
                     document.getElementById("back").addEventListener("click", function (e) {
                         webview.goBack()
                     })
-                    
+                
                     document.getElementById("home").addEventListener("click", function (e) {
                         webview.src = configuration.homepage
-                    })
-                    
-                    webview.addEventListener('new-window', function (e) {
-                        e.preventDefault()
-    
-                        let urlCheck = configuration.whitelist.find(i => {
-                            if(e.url.includes(i)) {
-                                return true
-                            }
-                        })
-    
-                        if(!urlCheck) {
-                            return Swal.fire({
-                                text: 'Доступ запрещен',
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            })
-                        }
-        
-                        webview.src = e.url
-                    })
-                    
-                    webview.addEventListener('will-navigate', function (e) {
-                        e.preventDefault()
-                        
-                        let urlCheck = configuration.whitelist.find(i => {
-                            if(e.url.includes(i)) {
-                                return true
-                            }
-                        })
-    
-                        if(!urlCheck) {
-                            return Swal.fire({
-                                text: 'Доступ запрещен',
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            })
-                        }
-        
-                        webview.src = e.url
                     })
                 })
             }
