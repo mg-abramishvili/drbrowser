@@ -8,7 +8,7 @@ const url = require('url')
 const exec = require('child_process').exec
 const Alert = require("electron-alert")
 
-const { app, BrowserWindow, globalShortcut } = require('electron')
+const { app, BrowserWindow, globalShortcut, ipcMain } = require('electron')
 
 const configuration = JSON.parse(fs.readFileSync(__dirname + '/configuration.json'))
 
@@ -81,7 +81,7 @@ app.whenReady().then(() => {
             showCancelButton: true
         }
 
-        let promise = taskmgrAlert.fireWithFrame(swalOptions, "Введите пароль", null, false);
+        let promise = taskmgrAlert.fireWithFrame(swalOptions, "Exit", null, false);
         promise.then((result) => {
             if (result.value && result.value == '12345678') {
                 app.exit(0)
@@ -100,10 +100,29 @@ app.whenReady().then(() => {
             showCancelButton: true
         }
 
-        let promise = taskmgrAlert.fireWithFrame(swalOptions, "Delete file?", null, false);
+        let promise = taskmgrAlert.fireWithFrame(swalOptions, "Task Manager", null, false);
         promise.then((result) => {
             if (result.value && result.value == '12345678') {
                 execute('taskmgr', (output) => {})
+            } else if (result.dismiss === Alert.DismissReason.cancel) {
+                // canceled
+            }
+        })
+    })
+
+    globalShortcut.register('F3', () => {
+        let taskmgrAlert = new Alert()
+
+        let swalOptions = {
+            text: "Введите пароль",
+            input: 'text',
+            showCancelButton: true
+        }
+
+        let promise = taskmgrAlert.fireWithFrame(swalOptions, "Settings", null, false);
+        promise.then((result) => {
+            if (result.value && result.value == '12345678') {
+                mainWindow.webContents.send('change-url', 'http://127.0.0.1:3000')
             } else if (result.dismiss === Alert.DismissReason.cancel) {
                 // canceled
             }

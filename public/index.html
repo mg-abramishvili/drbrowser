@@ -77,9 +77,15 @@
 
                     const Swal = require('sweetalert2')
 
+                    const { ipcRenderer } = require('electron')
+
                     const webview = document.querySelector('webview')
 
                     webview.src = configuration.homepage
+
+                    ipcRenderer.on('change-url', function (evt, message) {
+                        webview.src = message
+                    })
                     
                     document.getElementById("back").addEventListener("click", function (e) {
                         webview.goBack()
