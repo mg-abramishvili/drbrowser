@@ -38,8 +38,8 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1024,
         height: 576,
-        frame: false,
-        fullscreen: true,
+        frame: true,
+        fullscreen: false,
         webPreferences: {
             contextIsolation: false,
             nodeIntegration: true,
@@ -133,6 +133,11 @@ app.whenReady().then(() => {
 // new window blocker
 app.on('web-contents-created', function (webContentsCreatedEvent, contents) {
     if(contents.getType() === 'webview') {
+        ipcMain.on('kb', (e, msg) => {
+            contents.sendInputEvent({ type: 'keyDown', keyCode: msg })
+            contents.sendInputEvent({ type: 'char', keyCode: msg })
+        })
+
         contents.on('new-window', function (newWindowEvent, url) {
             newWindowEvent.preventDefault()
             urlCheck(url)
