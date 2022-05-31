@@ -16,7 +16,7 @@
             #webview {
                 display: inline-flex;
                 width: 100vw;
-                height: 92.9vh;
+                height: 60vh;
             }
 
             /* PANEL */
@@ -26,22 +26,31 @@
                 left: 0;
                 right: 0;
                 background-color: #fff;
-                height: 7vh;
+                height: 40vh;
                 text-align: center;
                 border-top: 0.3vh solid #ccc;
             }
-            .panel button {
-                display: inline-block;
-                vertical-align: middle;
+            .panel .buttons {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: gray;
+                height: 5vh;
+            }
+            .panel .buttons button {
                 margin: 0 1vh;
                 background: none;
                 box-shadow: none;
                 border: 0;
-                margin-top: 1.1vh;
+                width: 5vh;
+                height: 5vh;
             }
-            .panel button svg {
-                width: auto;
-                height: 4vh;
+            .panel .buttons button svg {
+                width: 100%;
+                height: 100%;
+            }
+            .panel .simple-keyboard {
+                height: 35vh;
             }
             /* PANEL */
             .swal2-popup {
@@ -53,20 +62,21 @@
         <webview id="webview" src="" webpreferences="nativeWindowOpen=true" allowpopups></webview>
 
         <div class="panel">
-            <button id="back">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
-                </svg>
-            </button>
-            <button id="home">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
-                    <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
-                </svg>
-            </button>
+            <div class="simple-keyboard"></div>
+            <div class="buttons">
+                <button id="back">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                    </svg>
+                </button>
+                <button id="home">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
+                        <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
-
-        <div class="simple-keyboard"></div>
         
         <script>
             onload = () => {
@@ -98,10 +108,96 @@
                     const Keyboard = window.require("simple-keyboard").default
 
                     const myKeyboard = new Keyboard({
-                        onKeyPress: button => onKeyPress(button)
+                        onKeyPress: button => onKeyPress(button),
+                        layout: {
+                            'eng': [
+                                '1 2 3 4 5 6 7 8 9 0 {bksp}',
+                                'q w e r t y u i o p',
+                                'a s d f g h j k l {enter}',
+                                'z x c v b n m',
+                                '{lang} {shift} {space} {symbols}'
+                            ],
+                            'engShift': [
+                                '1 2 3 4 5 6 7 8 9 0 {bksp}',
+                                'Q W E R T Y U I O P',
+                                'A S D F G H J K L {enter}',
+                                'Z X C V B N M',
+                                '{lang} {shift} {space} {symbols}'
+                            ],
+                            'rus': [
+                                '1 2 3 4 5 6 7 8 9 0 {bksp}',
+                                'й ц у к е н г ш щ з х ъ',
+                                'ф ы в а п р о л д ж э \' {enter}',
+                                'я ч с м и т ь б ю',
+                                '{lang} {shift} {space} {symbols}'
+                            ],
+                            'rusShift': [
+                                '1 2 3 4 5 6 7 8 9 0 {bksp}',
+                                'Й Ц У К Е Н Г Ш Щ З Х Ъ',
+                                'Ф Ы В А П Р О Л Д Ж Э \' {enter}',
+                                'Я Ч С М И Т Ь Б Ю',
+                                '{lang} {shift} {space} {symbols}'
+                            ],
+                            'symbols': [
+                                '` " @ № # $ % ^ & *',
+                                '( ) [ ] { } / < >',
+                                '- _ + = : ; ? ! , . {symbolsBack}',
+                            ],
+                        },
+                        display: {
+                            '{bksp}': '←',
+                            '{enter}': 'Enter',
+                            '{shift}': 'Shift',
+                            '{lang}': 'RU/EN',
+                            '{space}': '_______________',
+                            '{symbols}': '@',
+                            '{symbolsBack}': 'A',
+                        },
+                        layoutName: 'rus'
                     })
 
                     function onKeyPress(button) {
+                        if(button === "{shift}") {
+                            let currentLang = myKeyboard.options.layoutName
+                            
+                            if(currentLang === 'rus') {
+                                myKeyboard.setOptions({ layoutName: 'rusShift' })
+                            }
+                            if(currentLang === 'rusShift') {
+                                myKeyboard.setOptions({ layoutName: 'rus' })
+                            }
+                            if(currentLang === 'eng') {
+                                myKeyboard.setOptions({ layoutName: 'engShift' })
+                            }
+                            if(currentLang === 'engShift') {
+                                myKeyboard.setOptions({ layoutName: 'eng' })
+                            }
+                            
+                            return
+                        }
+
+                        if(button === "{lang}") {
+                            let currentLang = myKeyboard.options.layoutName
+
+                            if(currentLang === 'rus' || currentLang === 'rusShift') {
+                                myKeyboard.setOptions({ layoutName: 'eng' })
+                            }
+                            if(currentLang === 'eng' || currentLang === 'engShift') {
+                                myKeyboard.setOptions({ layoutName: 'rus' })
+                            }
+
+                            return
+                        }
+
+                        if(button === "{symbols}") {
+                            myKeyboard.setOptions({ layoutName: 'symbols' })
+                            return
+                        }
+                        if(button === "{symbolsBack}") {
+                            myKeyboard.setOptions({ layoutName: 'rus' })
+                            return
+                        }
+
                         let btn = button
 
                         if(button == '{space}') {
