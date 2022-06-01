@@ -38,8 +38,8 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1024,
         height: 576,
-        frame: true,
-        fullscreen: false,
+        frame: false,
+        fullscreen: true,
         webPreferences: {
             contextIsolation: false,
             nodeIntegration: true,
