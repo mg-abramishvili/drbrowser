@@ -63,81 +63,25 @@ function createWindow() {
     })
 }
 
-function execute(command, callback) {
-    exec(command, (error, stdout, stderr) => {
-        callback(stdout)
-    })
-}
-
 app.on('ready', createWindow)
 
 app.whenReady().then(() => {
     globalShortcut.register('F1', () => {
-        let taskmgrAlert = new Alert()
-
-        let swalOptions = {
-            text: "Введите пароль",
-            input: 'text',
-            showCancelButton: true
-        }
-
-        let promise = taskmgrAlert.fireWithFrame(swalOptions, "Exit", null, false);
-        promise.then((result) => {
-            if (result.value && result.value == '12345678') {
-                app.exit(0)
-            } else if (result.dismiss === Alert.DismissReason.cancel) {
-                // canceled
-            }
-        })
+        functionButton('F1')
     })
 
     globalShortcut.register('F2', () => {
-        let taskmgrAlert = new Alert()
-
-        let swalOptions = {
-            text: "Введите пароль",
-            input: 'text',
-            showCancelButton: true
-        }
-
-        let promise = taskmgrAlert.fireWithFrame(swalOptions, "Task Manager", null, false);
-        promise.then((result) => {
-            if (result.value && result.value == '12345678') {
-                execute('taskmgr', (output) => {})
-            } else if (result.dismiss === Alert.DismissReason.cancel) {
-                // canceled
-            }
-        })
+        functionButton('F2')
     })
 
     globalShortcut.register('F3', () => {
-        let taskmgrAlert = new Alert()
-
-        let swalOptions = {
-            text: "Введите пароль",
-            input: 'text',
-            showCancelButton: true
-        }
-
-        let promise = taskmgrAlert.fireWithFrame(swalOptions, "Settings", null, false);
-        promise.then((result) => {
-            if (result.value && result.value == '12345678') {
-                mainWindow.webContents.send('change-url', 'http://127.0.0.1:3000')
-            } else if (result.dismiss === Alert.DismissReason.cancel) {
-                // canceled
-            }
-        })
+        functionButton('F3')
     })
 })
 
-// new window blocker
 app.on('web-contents-created', function (webContentsCreatedEvent, contents) {
     if(contents.getType() === 'webview') {
         ipcMain.on('kb', (e, msg) => {
-            if(msg == 'space') {
-                
-            }
-
             contents.sendInputEvent({ type: 'keyDown', keyCode: msg })
             contents.sendInputEvent({ type: 'char', keyCode: msg })
             contents.sendInputEvent({ type: 'keyUp', keyCode: msg })
@@ -158,6 +102,17 @@ app.on('web-contents-created', function (webContentsCreatedEvent, contents) {
     }
 })
 
+app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+    event.preventDefault()
+    callback(true)
+})
+
+app.on('window-all-closed', function () {
+    app.quit()
+})
+
+// FUNCTIONS
+
 function urlCheck(url) {
     if(updatedConfiguration.whitelist.find(i => url.includes(i))) {
         mainWindow.webContents.send('change-url', url)
@@ -176,11 +131,35 @@ function urlCheck(url) {
     }
 }
 
-app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
-    event.preventDefault()
-    callback(true)
-})
+function functionButton(button) {
+    let passwordAlert = new Alert()
 
-app.on('window-all-closed', function () {
-    app.quit()
-})
+    let swalOptions = {
+        text: "Введите пароль",
+        input: 'text',
+        showCancelButton: true
+    }
+
+    let promise = passwordAlert.fireWithFrame(swalOptions, "Введите пароль", null, false);
+    promise.then((result) => {
+        if (result.value && result.value == '12345678') {
+            if(button == 'F1') {
+                app.exit(0)
+            }
+            if(button == 'F2') {
+                execute('taskmgr', (output) => {})
+            }
+            if(button == 'F3') {
+                mainWindow.webContents.send('change-url', 'http://127.0.0.1:3000')
+            }
+        } else if (result.dismiss === Alert.DismissReason.cancel) {
+            // canceled
+        }
+    })
+}
+
+function execute(command, callback) {
+    exec(command, (error, stdout, stderr) => {
+        callback(stdout)
+    })
+}
