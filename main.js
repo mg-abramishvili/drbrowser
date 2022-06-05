@@ -7,6 +7,7 @@ const path = require('path')
 const url = require('url')
 const exec = require('child_process').exec
 const Alert = require("electron-alert")
+const os = require('os')
 
 const { app, BrowserWindow, globalShortcut, ipcMain } = require('electron')
 
@@ -66,6 +67,8 @@ function createWindow() {
 app.on('ready', createWindow)
 
 app.whenReady().then(() => {
+    licenseCheck()
+
     globalShortcut.register('F1', () => {
         functionButton('F1')
     })
@@ -113,6 +116,20 @@ app.on('window-all-closed', function () {
 
 // FUNCTIONS
 
+function licenseCheck() {
+    let pcName = os.hostname()
+    let pcNameFromConfig = updatedConfiguration.pc_name
+    let licKey = updatedConfiguration.key
+
+    if(!licKey || pcName != pcNameFromConfig) {
+        mainWindow.loadURL(url.format({
+            pathname: path.join(__dirname, `./public/error.html`),
+            protocol: "file:",
+            slashes: true
+        }))
+    }
+}
+
 function urlCheck(url) {
     if(updatedConfiguration.whitelist.find(i => url.includes(i))) {
         mainWindow.webContents.send('change-url', url)
@@ -144,6 +161,7 @@ function functionButton(button) {
     promise.then((result) => {
         if (result.value && result.value == '12345678') {
             if(button == 'F1') {
+                execute('explorer.exe', (output) => {})
                 app.exit(0)
             }
             if(button == 'F2') {
