@@ -121,8 +121,16 @@ function licenseCheck() {
     let pcNameFromConfig = updatedConfiguration.pc_name
     let licKey = updatedConfiguration.key
 
-    if(!licKey || pcName != pcNameFromConfig) {
-        mainWindow.loadURL(url.format({
+    if(!licKey) {
+        return mainWindow.loadURL(url.format({
+            pathname: path.join(__dirname + '/activation/dist/index.html'),
+            protocol: "file:",
+            slashes: true
+        }))
+    }
+
+    if(pcName != pcNameFromConfig) {
+        return mainWindow.loadURL(url.format({
             pathname: path.join(__dirname, `./public/error.html`),
             protocol: "file:",
             slashes: true
