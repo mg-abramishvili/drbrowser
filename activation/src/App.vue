@@ -6,6 +6,10 @@
             <div v-if="views.success" class="alert alert-success mb-4" role="alert">
                 Активация прошла успешно!
             </div>
+
+            <div v-if="views.errorMessage.length > 0" class="alert alert-danger mb-4" role="alert">
+                {{ views.errorMessage }}
+            </div>
             
             <div class="mb-4">
                 <div class="row">
@@ -13,7 +17,7 @@
                         <input v-model="input" type="text" class="form-control" placeholder="Введите ключ активации">
                     </div>
                     <div class="col-4">
-                        <button @click="checkKey()" class="btn btn-primary w-100">Активировать</button>
+                        <button @click="checkKey()" :disabled="!views.saveButton" class="btn btn-primary w-100">Активировать</button>
                     </div>
                 </div>
             </div>
@@ -34,6 +38,8 @@
 
                 views: {
                     success: false,
+                    errorMessage: '',
+                    saveButton: true,
                 }
             }
         },
@@ -46,11 +52,28 @@
                     return
                 }
 
+                this.views.saveButton = false
+
                 axios.get(`http://touchlab.su/api/key/view/${this.input}`)
                 .then(response => {
+                    if(response.data && response.data.status == 'active') {
+                        this.views.errorMessage = 'Этот ключ уже был активирован'
+                        
+                        this.views.saveButton = true
+
+                        return
+                    }
+
                     if(response.data && response.data.status == 'waiting') {
                         this.activate()
                     }
+                })
+                .catch(errors => {
+                    this.views.errorMessage = 'Неверный ключ'
+                        
+                    this.views.saveButton = true
+
+                    return
                 })
             },
             activate() {
