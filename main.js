@@ -33,6 +33,20 @@ ex.post('/settings', function(req, res) {
     res.sendStatus(200)
 })
 
+ex.use(express.json())
+ex.post('/activation', function(req, res) {
+    updatedConfiguration.key = req.body.key
+    updatedConfiguration.hostname = os.hostname()
+    
+    fs.writeFileSync(__dirname + '/configuration.json', JSON.stringify(updatedConfiguration))
+
+    mainWindow.loadURL(url.format({
+        pathname: path.join(__dirname, `./public/index.html`),
+        protocol: "file:",
+        slashes: true
+    }))
+})
+
 let mainWindow
 
 function createWindow() {
@@ -117,8 +131,8 @@ app.on('window-all-closed', function () {
 // FUNCTIONS
 
 function licenseCheck() {
-    let pcName = os.hostname()
-    let pcNameFromConfig = updatedConfiguration.pc_name
+    let hostname = os.hostname()
+    let hostnameFromConfig = updatedConfiguration.hostname
     let licKey = updatedConfiguration.key
 
     if(!licKey) {
@@ -129,7 +143,7 @@ function licenseCheck() {
         }))
     }
 
-    if(pcName != pcNameFromConfig) {
+    if(hostname != hostnameFromConfig) {
         return mainWindow.loadURL(url.format({
             pathname: path.join(__dirname, `./public/error.html`),
             protocol: "file:",
